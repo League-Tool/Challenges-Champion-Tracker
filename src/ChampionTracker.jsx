@@ -1,3 +1,14 @@
+// Progress tiers and thresholds per challenge
+const CHALLENGE_TIERS = {
+  "All Random All Champions": [1, 5, 15, 30, 50, 100, 150],
+  "Invincible": [2, 5, 10, 15, 30, 50, 75],
+  "Perfectionist": [1, 5, 15, 30, 50, 100, 150],
+  "Jack of All Champs": [10, 25, 50, 75, 100, 125, 150],
+  "Protean Override": [3, 5, 10, 15, 30, 75, 100],
+  "Same Penta, Different Champ": [1, 3, 5, 10, 15, 20, 30]
+};
+
+const TIER_NAMES = ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master'];
 import React, { useState, useEffect } from 'react';
 
 const DD_BASE = "https://ddragon.leagueoflegends.com";
@@ -106,165 +117,142 @@ const ChampionTracker = () => {
 
   if (loading) return <div>Loading Champions...</div>;
 
+  // Progress calculation
+  const completed = doneChampions.length;
+  const total = allChampions.length;
+  const thresholds = CHALLENGE_TIERS[currentChallenge] || [1, 5, 15, 30, 50, 100, 150]; // fallback
+  // Find current tier
+  let currentTierIndex = 0;
+  for (let i = thresholds.length - 1; i >= 0; i--) {
+    if (completed >= thresholds[i]) {
+      currentTierIndex = i;
+      break;
+    }
+  }
+  const currentTier = TIER_NAMES[currentTierIndex];
+  // Next tier info
+  const nextTierIndex = currentTierIndex + 1;
+  const nextTierName = nextTierIndex < TIER_NAMES.length ? TIER_NAMES[nextTierIndex] : null;
+  const nextTierCount = nextTierIndex < thresholds.length ? thresholds[nextTierIndex] : null;
+  // Progress bar percent (towards next tier or max)
+  const currentThreshold = thresholds[currentTierIndex];
+  const nextThreshold = nextTierCount || thresholds[thresholds.length - 1];
+  const tierProgress = nextThreshold - currentThreshold;
+  const tierCompleted = completed - currentThreshold;
+  const tierPercent = tierProgress > 0 ? Math.round((tierCompleted / tierProgress) * 100) : 100;
+
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif', position: 'relative', minHeight: '100vh' }}>
-        <div style={{ 
-                display: 'flex', 
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}>
-            <h1 style={{ 
-                textAlign: 'center', 
-                fontSize: '2.5rem', 
-                fontWeight: 'bold', 
-                background: 'linear-gradient(45deg, #c8aa6e, #f0e6d2, #c8aa6e)', 
-                WebkitBackgroundClip: 'text', 
-                WebkitTextFillColor: 'transparent', 
-                backgroundClip: 'text', 
-                textShadow: '0 2px 8px rgba(0,0,0,0.25)', 
-                margin: '20px',
-                padding: '20px',
-                letterSpacing: '2px'
-            }}>
-                LoL Challenges Champion Tracker
-            </h1>
-        </div>
-      <select 
-        value={currentChallenge} 
-        onChange={(e) => setCurrentChallenge(e.target.value)} 
-        style={{ 
-          marginLeft: '20px', 
-          padding: '8px 12px', 
-          backgroundColor: '#2a2a2a', 
-          color: '#f0e6d2', 
-          border: '2px solid #c8aa6e', 
-          borderRadius: '5px', 
-          fontSize: '14px',
-          cursor: 'pointer'
-        }}
-      >
-        {[...challenges].sort((a, b) => a.localeCompare(b)).map(c => (
-          <option key={c} value={c} style={{ backgroundColor: '#2a2a2a', color: '#f0e6d2' }}>{c}</option>
-        ))}
-      </select>
-      <br />
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
-        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+    <div className="main-container">
+
+      <div className="title-container">
+          <h1 className="title">
+              LoL Challenges Champion Tracker
+          </h1>
+      </div>
+      {/* Controls Row */}
+      <div className="controls-row">
+        <label className="show-completed">
           <input 
+            className="checkbox"
             type="checkbox" 
             checked={showDone} 
             onChange={(e) => setShowDone(e.target.checked)} 
-            style={{ 
-              marginRight: '8px', 
-              width: '16px', 
-              height: '16px', 
-              accentColor: '#c8aa6e' 
-            }}
           />
-          <span style={{ color: '#f0e6d2', fontSize: '14px' }}>Show Completed</span>
+          <span className="checkbox-label">Show Completed</span>
         </label>
-        <div style={{ display: 'flex', gap: '10px' }}>
+
+        <select 
+          className="challenge-select"
+          value={currentChallenge} 
+          onChange={(e) => setCurrentChallenge(e.target.value)} 
+        >
+          {[...challenges].sort((a, b) => a.localeCompare(b)).map(c => (
+            <option className="select-option" key={c} value={c}>{c}</option>
+          ))}
+        </select>
+
+        <div className="icon-buttons">
           <button 
+            className="icon-button"
+            style={{ backgroundColor: iconSize === 'small' ? '#c8aa6e' : '#2a2a2a' }}
             onClick={() => setIconSize('small')} 
-            style={{ 
-              backgroundColor: iconSize === 'small' ? '#c8aa6e' : '#2a2a2a', 
-              color: '#f0e6d2', 
-              border: '2px solid #c8aa6e', 
-              borderRadius: '5px', 
-              padding: '5px 10px', 
-              cursor: 'pointer', 
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
           >
             S
           </button>
           <button 
+            className="icon-button"
+            style={{ backgroundColor: iconSize === 'medium' ? '#c8aa6e' : '#2a2a2a' }}
             onClick={() => setIconSize('medium')} 
-            style={{ 
-              backgroundColor: iconSize === 'medium' ? '#c8aa6e' : '#2a2a2a', 
-              color: '#f0e6d2', 
-              border: '2px solid #c8aa6e', 
-              borderRadius: '5px', 
-              padding: '5px 10px', 
-              cursor: 'pointer', 
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
           >
             M
           </button>
           <button 
+            className="icon-button"
+            style={{ backgroundColor: iconSize === 'large' ? '#c8aa6e' : '#2a2a2a' }}
             onClick={() => setIconSize('large')} 
-            style={{ 
-              backgroundColor: iconSize === 'large' ? '#c8aa6e' : '#2a2a2a', 
-              color: '#f0e6d2', 
-              border: '2px solid #c8aa6e', 
-              borderRadius: '5px', 
-              padding: '5px 10px', 
-              cursor: 'pointer', 
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
           >
             L
           </button>
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fill, minmax(${sizes[iconSize].minMax}px, 1fr))`, gap: '15px', marginTop: '20px' }}>
+            {/* Progress Bar & Tier */}
+      <div className="progress-container">
+        <div className="progress-header">
+          <span className="progress-title">Progress</span>
+          <span className="progress-count">{completed} / {thresholds[thresholds.length - 1]} champions</span>
+        </div>
+        <div className="progress-bar-bg">
+          <div className="progress-bar-fill" style={{
+            width: Math.min(100, Math.round((completed / thresholds[thresholds.length - 1]) * 100)) + '%',
+            justifyContent: Math.min(100, Math.round((completed / thresholds[thresholds.length - 1]) * 100)) > 10 ? 'flex-end' : 'center'
+          }}>{Math.min(100, Math.round((completed / thresholds[thresholds.length - 1]) * 100))}%</div>
+        </div>
+        <div className="progress-footer">
+          <span className="tier-label">Tier: {currentTier}</span>
+          <span className="next-tier">
+            {nextTierName ? `Next: ${nextTierName} (${nextTierCount - completed} more)` : 'Max tier reached!'}
+          </span>
+        </div>
+      </div>
+      <div className="champion-grid" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${sizes[iconSize].minMax}px, 1fr))` }}>
         {availableChampions.map(champ => (
           <div 
+            className="champion-item"
+            style={{ opacity: 1, filter: 'none' }}
             key={champ.id} 
             onClick={() => toggleChampion(champ.id)}
-            style={{ 
-              cursor: 'pointer', 
-              textAlign: 'center',
-              opacity: 1,
-              filter: 'none',
-              transition: '0.2s'
-            }}
           >
             <img 
+              className="champion-image"
+              style={{ width: `${sizes[iconSize].imgWidth}px`, border: '3px solid transparent' }}
               src={`${DD_BASE}/cdn/${version}/img/champion/${champ.id}.png`} 
               alt={champ.name}
-              style={{ width: `${sizes[iconSize].imgWidth}px`, borderRadius: '8px', border: '3px solid transparent' }}
             />
-            <div style={{ fontSize: '12px', marginTop: '5px', fontWeight: 'normal' }}>
+            <div className="champion-name" style={{ marginTop: '5px', fontWeight: 'normal' }}>
               {champ.name}
             </div>
           </div>
         ))}
         {showDone && doneChampions.map(champ => (
           <div 
+            className="champion-item"
+            style={{ opacity: 0.4, filter: 'grayscale(100%)' }}
             key={champ.id} 
             onClick={() => toggleChampion(champ.id)}
-            style={{ 
-              cursor: 'pointer', 
-              textAlign: 'center',
-              opacity: 0.4,
-              filter: 'grayscale(100%)',
-              transition: '0.2s'
-            }}
           >
             <img 
+              className="champion-image"
+              style={{ width: `${sizes[iconSize].imgWidth}px`, border: '3px solid #c8aa6e' }}
               src={`${DD_BASE}/cdn/${version}/img/champion/${champ.id}.png`} 
               alt={champ.name}
-              style={{ width: `${sizes[iconSize].imgWidth}px`, borderRadius: '8px', border: '3px solid #c8aa6e' }}
             />
-            <div style={{ fontSize: '12px', marginTop: '0px', fontWeight: 'bold' }}>
+            <div className="champion-name" style={{ marginTop: '0px', fontWeight: 'bold' }}>
               {champ.name}
             </div>
           </div>
         ))}
       </div>
-      <div style={{ 
-        position: 'fixed', 
-        bottom: '10px', 
-        left: '10px', 
-        color: '#555', 
-        fontSize: '12px', 
-        fontStyle: 'italic' 
-      }}>
+      <div className="footer">
         Made by fishb0ne
       </div>
     </div>

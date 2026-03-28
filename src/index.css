@@ -55,7 +55,6 @@ body {
 }
 
 #root {
-  /* width: 1126px; */
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
@@ -64,6 +63,197 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+
+.controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .controls-row {
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+  }
+}
+
+.main-container {
+  padding: 20px;
+  font-family: sans-serif;
+  position: relative;
+  min-height: 100vh;
+}
+
+.progress-container {
+  max-width: 500px;
+  margin: 0 auto 24px auto;
+  padding: 12px 0;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.progress-title {
+  font-weight: bold;
+  color: #c8aa6e;
+  font-size: 18px;
+}
+
+.progress-count {
+  color: #f0e6d2;
+  font-size: 15px;
+}
+
+.progress-bar-bg {
+  background: #222;
+  border-radius: 8px;
+  height: 22px;
+  box-shadow: 0 1px 4px #0004;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.4s;
+  display: flex;
+  align-items: center;
+  color: #222;
+  font-weight: bold;
+  font-size: 14px;
+  padding-right: 10px;
+  background: linear-gradient(90deg, #f0e6d2, #c8aa6e 80%);
+}
+
+.progress-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tier-label {
+  color: #c8aa6e;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.next-tier {
+  color: #aaa;
+  font-size: 13px;
+}
+
+.title-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  background: linear-gradient(45deg, #c8aa6e, #f0e6d2, #c8aa6e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  margin-bottom: 20px;
+  margin-top: 0;
+  padding: 20px;
+  letter-spacing: 2px;
+}
+
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.8rem;
+  }
+}
+
+.show-completed {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  accent-color: #c8aa6e;
+}
+
+.checkbox-label {
+  color: #f0e6d2;
+  font-size: 14px;
+}
+
+.challenge-select {
+  padding: 8px 12px;
+  background-color: #2a2a2a;
+  color: #f0e6d2;
+  border: 2px solid #c8aa6e;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.select-option {
+  background-color: #2a2a2a;
+  color: #f0e6d2;
+}
+
+.icon-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-button {
+  color: #f0e6d2;
+  border: 2px solid #c8aa6e;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.champion-grid {
+  display: grid;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.champion-item {
+  cursor: pointer;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.champion-image {
+  border-radius: 8px;
+}
+
+.champion-name {
+  font-size: 12px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  color: #555;
+  font-size: 12px;
+  font-style: italic;
 }
 
 h1,
