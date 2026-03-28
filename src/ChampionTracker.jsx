@@ -215,42 +215,35 @@ const ChampionTracker = () => {
         </div>
       </div>
       <div className="champion-grid" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${sizes[iconSize].minMax}px, 1fr))` }}>
-        {availableChampions.map(champ => (
-          <div 
-            className="champion-item"
-            style={{ opacity: 1, filter: 'none' }}
-            key={champ.id} 
-            onClick={() => toggleChampion(champ.id)}
-          >
-            <img 
-              className="champion-image"
-              style={{ width: `${sizes[iconSize].imgWidth}px`, border: '3px solid transparent' }}
-              src={`${DD_BASE}/cdn/${version}/img/champion/${champ.id}.png`} 
-              alt={champ.name}
-            />
-            <div className="champion-name" style={{ marginTop: '5px', fontWeight: 'normal' }}>
-              {champ.name}
+        {(showDone ? [...availableChampions, ...doneChampions].sort((a, b) => a.name.localeCompare(b.name)) : availableChampions).map(champ => {
+          const isCompleted = progressObj[currentChallenge]?.includes(champ.id) || false;
+          return (
+            <div 
+              className="champion-item"
+              style={{ 
+                opacity: isCompleted ? 0.4 : 1, 
+                position: 'relative'
+              }}
+              key={champ.id} 
+              onClick={() => toggleChampion(champ.id)}
+            >
+              {/* Check icon removed as requested */}
+              <img 
+                className="champion-image"
+                style={{ 
+                  width: `${sizes[iconSize].imgWidth}px`, 
+                  border: isCompleted ? '3px solid #c8aa6e' : '3px solid transparent',
+                  filter: isCompleted ? 'grayscale(100%)' : 'none'
+                }}
+                src={`${DD_BASE}/cdn/${version}/img/champion/${champ.id}.png`} 
+                alt={champ.name}
+              />
+              <div className="champion-name" style={{ marginTop: isCompleted ? '0px' : '5px', fontWeight: isCompleted ? 'bold' : 'normal' }}>
+                {champ.name}
+              </div>
             </div>
-          </div>
-        ))}
-        {showDone && doneChampions.map(champ => (
-          <div 
-            className="champion-item"
-            style={{ opacity: 0.4, filter: 'grayscale(100%)' }}
-            key={champ.id} 
-            onClick={() => toggleChampion(champ.id)}
-          >
-            <img 
-              className="champion-image"
-              style={{ width: `${sizes[iconSize].imgWidth}px`, border: '3px solid #c8aa6e' }}
-              src={`${DD_BASE}/cdn/${version}/img/champion/${champ.id}.png`} 
-              alt={champ.name}
-            />
-            <div className="champion-name" style={{ marginTop: '0px', fontWeight: 'bold' }}>
-              {champ.name}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <div className="footer">
         Made by fishb0ne
